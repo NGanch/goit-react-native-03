@@ -1,50 +1,98 @@
+import { useState } from "react";
 import {
-  View,
+  StyleSheet,
   Text,
+  View,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
+  KeyboardAvoidingView,
 } from "react-native";
 
-export function LoginScreen() {
+export const LoginScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+
+  const handleSubmit = () => {
+    console.log({ email, password });
+    setEmail("");
+    setPassword("");
+  };
+
+  const togglePassword = () => {
+    setIsPasswordHidden(!isPasswordHidden);
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: "flex-end" }}>
-      <View style={styles.formWrapper}>
-        <Text style={styles.title}>Увійти</Text>
-        <TextInput
-          style={[styles.commonText, styles.input]}
-          placeholder="Адреса електронної пошти"
-        ></TextInput>
-        <View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <View style={{ flex: 1, justifyContent: "flex-end" }}>
+        <View
+          style={[
+            styles.formWrapper,
+            {
+              paddingBottom: isKeyboardVisible ? 32 : 111,
+              height: isKeyboardVisible ? 248 : "auto",
+            },
+          ]}
+        >
+          <Text style={styles.title}>Увійти</Text>
           <TextInput
             style={[styles.commonText, styles.input]}
-            placeholder="Пароль"
-            textContentType="password"
-          />
-          <TouchableOpacity style={styles.showPasswordButton}>
-            <Text>Показати</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={[styles.commonText, styles.buttonText]}>Увійти</Text>
-        </TouchableOpacity>
-        <View style={styles.signInContainer}>
-          <Text style={[styles.commonText, styles.signInText]}>
-            Немає акаунту?{" "}
-          </Text>
-          <TouchableOpacity>
-            <Text
-              style={[styles.commonText, styles.signInText, styles.signInLink]}
+            placeholder="Адреса електронної пошти"
+            textContentType="emailAddress"
+            value={email}
+            onChangeText={setEmail}
+            onFocus={() => setIsKeyboardVisible(true)}
+            onBlur={() => setIsKeyboardVisible(false)}
+          ></TextInput>
+          <View>
+            <TextInput
+              style={[styles.commonText, styles.input]}
+              placeholder="Пароль"
+              textContentType="password"
+              value={password}
+              onChangeText={setPassword}
+              onFocus={() => setIsKeyboardVisible(true)}
+              onBlur={() => setIsKeyboardVisible(false)}
+              secureTextEntry={isPasswordHidden}
+            />
+            <TouchableOpacity
+              style={styles.showPasswordButton}
+              onPress={togglePassword}
             >
-              Зареєструватися
-            </Text>
+              {password !== "" && (
+                <Text>{isPasswordHidden ? "Показати" : "Сховати"}</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={[styles.commonText, styles.buttonText]}>Увійти</Text>
           </TouchableOpacity>
+          <View style={styles.signInContainer}>
+            <Text style={[styles.commonText, styles.signInText]}>
+              Немає акаунту?{" "}
+            </Text>
+            <TouchableOpacity>
+              <Text
+                style={[
+                  styles.commonText,
+                  styles.signInText,
+                  styles.signInLink,
+                ]}
+              >
+                Зареєструватися
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
-}
-
+};
 const styles = StyleSheet.create({
   formWrapper: {
     width: "100%",
